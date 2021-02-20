@@ -1,0 +1,15 @@
+<?php
+
+unset($argv[0]);
+$domain = $argv[1];
+
+if (file_exists("/etc/apache2/sites-available/$domain.conf")) {
+    unlink("/etc/apache2/sites-available/$domain.conf");
+}
+$hostFile = file_get_contents("/etc/hosts");
+
+if (strpos($hostFile, $domain)) {
+    $hostFile = chop($hostFile, "127.0.0.1\t$domain #auto create domain");
+    file_put_contents("/etc/hosts", $hostFile);
+    echo "Thành công\n";
+}

@@ -1,0 +1,36 @@
+<?php 
+
+unset($argv[0]);
+
+$domain = $argv[1];
+$path = $argv[2];
+
+if(!empty($domain)){
+    if(!empty($path)){
+        if (is_dir($path) || file_exists($path)) {
+            $content = file_get_contents('./file1.conf');
+            $content = $content."\tServerName $domain";
+            $content = $content."\n\tServerAlias www.$domain";
+            $content = $content."\n\tDocumentRoot $path";
+            $content = "$content\n".file_get_contents('./file2.conf');
+            file_put_contents("/etc/apache2/sites-available/$domain.conf", $content);
+            shell_exec("cd /etc/apache2/sites-available");
+            shell_exec("sudo a2ensite $domain.conf");
+            shell_exec("sudo a2dissite 000-default.conf");
+            $host = file_get_contents("/etc/hosts");
+            if (!strpos($host, $domain)) {
+                $host .= "\n127.0.0.1\t$domain #auto create domain";
+            }
+            file_put_contents('/etc/hosts', $host);
+            shell_exec("sudo systemctl restart apache2");
+            echo "thành công\n";
+        } else {
+            echo "Path không tồn tại";
+        }
+    } else {
+        echo "Không có path";
+    }
+}
+else {
+    echo "Không có domain";
+}
