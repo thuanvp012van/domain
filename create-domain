@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php 
 
 unset($argv[0]);
@@ -8,11 +9,11 @@ $path = $argv[2];
 if(!empty($domain)){
     if(!empty($path)){
         if (is_dir($path) || file_exists($path)) {
-            $content = file_get_contents('./file1.conf');
+            $content = file_get_contents('/usr/local/bin/domain/file1.conf');
             $content = $content."\tServerName $domain";
             $content = $content."\n\tServerAlias www.$domain";
             $content = $content."\n\tDocumentRoot $path";
-            $content = "$content\n".file_get_contents('./file2.conf');
+            $content = "$content\n".file_get_contents('/usr/local/bin/domain/file2.conf');
             file_put_contents("/etc/apache2/sites-available/$domain.conf", $content);
             shell_exec("cd /etc/apache2/sites-available");
             shell_exec("sudo a2ensite $domain.conf");
